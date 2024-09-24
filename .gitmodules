@@ -1,0 +1,6 @@
+[submodule "colibri"]
+	path = colibri-worker
+	url = git@github.com:carol-hsu/colibri.git
+[submodule "colibri-apiserver"]
+	path = colibri-apiserver
+	url = git@github.com:carol-hsu/colibri-apiserver.git
