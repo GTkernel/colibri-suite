@@ -53,3 +53,10 @@ In this paper, we run `core_pub.yml` as MEC server-side workload, while `sub.yml
 generate the serving traffic and computation. Files are under `./pubsub/k8s/` in the ROS repo.
 
 - **MPEG-OMAF Video 360 by Web Browser**
+We follow this deployment process in [this repo](https://github.com/GTkernel/omaf-video-360).
+To ensure consistency in our test case during experiments, we use [GoReplay](https://goreplay.org) 
+to record client actions (API requests) from the browser. These recorded actions can then be replayed and fed into the Video360 server.
+You can create your own test case if needed. Our `.gor` file is available in the repository at `./nginx-server/omaf.gor`. 
+With the NGINX server running in K8s, 
+we run GoReplay via Docker as the client, using the correctly configured server IP by tag `--output-http`.
+
