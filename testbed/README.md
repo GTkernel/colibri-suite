@@ -21,7 +21,7 @@ Here, I introduce our installation process:
 
 - **Metrics Server**: 
 Installed via a Helm chart using the default configuration. To install, check and run `./monitoring/metrics-server.sh`.
-If using Minikube, add the flag `--kubelet-insecure-tls` to the container's entry command. 
+If facing x509 certificate invalid issue, add the flag `--kubelet-insecure-tls` to the container's entry command by editing the deployment. 
 More details can be found in the related [issue ticket](https://github.com/kubernetes-sigs/metrics-server/issues/196).
 
 Verifying whether your metrics server is running correctly by command
@@ -44,8 +44,11 @@ To change the metrics querying interval, you can update the `housekeeping_interv
 In this paper, we used four MEC-native applications for system evaluations:
 
 - **Object detection by Tensorflow Serving**
+The detailed installation method is under the directory `./k8s` in [this repo](https://github.com/GTkernel/object-detector-tf-serve/). Be awared of the server-side and client-side docker images, application configuration file, and K8s config file, those are all necessary when you run this workload in K8s environment.
+The input data used in the paper is this [advertisement video](https://www.youtube.com/watch?v=7_mR0WXNhsA) on Youtube, about 1.5 minutes length.
 
 - **FleXR**
+The official repo of FleXR is at [here](https://github.com/gt-flexr/FleXR). In this repo, we cover deploying configurations on K8s, detailed as decription under `./flexr`.
 
 - **ROS: Robotic OS**
 Installation details are in [this repo](https://github.com/GTkernel/ros). 
