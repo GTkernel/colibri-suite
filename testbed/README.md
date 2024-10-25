@@ -14,7 +14,7 @@ Please refer these steps if you encounter any issues with your own setup.
 
 ## Other components in the monitoring system shown in Colibri paper
 
-We compare Colibri with other monitoring systems in K8s along with their data pipelines (Fig. 11 in paper).
+We compare Colibri with other monitoring systems in K8s along with their data pipelines (Fig. 9 in paper).
 Here, I introduce our installation process:
 
 - **Prometheus Adapter**:
@@ -41,21 +41,25 @@ To change the metrics querying interval, you can update the `housekeeping_interv
 
 ## Applications
 
-In this paper, we used four MEC-native applications for system evaluations:
+In this paper, we used four MEC-native applications as the benchmarking tools for system evaluations. 
+Their tags, shown in parentheses, are used throughout the paper:
 
-- **Object detection by Tensorflow Serving**
-The detailed installation method is under the directory `./k8s` in [this repo](https://github.com/GTkernel/object-detector-tf-serve/). Be awared of the server-side and client-side docker images, application configuration file, and K8s config file, those are all necessary when you run this workload in K8s environment.
-The input data used in the paper is this [advertisement video](https://www.youtube.com/watch?v=7_mR0WXNhsA) on Youtube, about 1.5 minutes length.
+- **Object detection by Tensorflow Serving (ML):**
+Detailed installation instructions are available in the `./k8s` directory of [this repo](https://github.com/GTkernel/object-detector-tf-serve/). 
+Please ensure you have the server-side and client-side Docker images, application configuration file, 
+and K8s config file -- all of which are necessary to run this workload in a K8s environment.
+The input data used in the paper is this 1.5-minute [advertisement video](https://www.youtube.com/watch?v=7_mR0WXNhsA) on Youtube.
 
-- **FleXR**
-The official repo of FleXR is at [here](https://github.com/gt-flexr/FleXR). In this repo, we cover deploying configurations on K8s, detailed as decription under `./flexr`.
+- **FleXR (XR):**
+The official repo of FleXR is linked [here](https://github.com/gt-flexr/FleXR). 
+In this repo, we includes deployment configurations for K8s, which are detailed under `./flexr`.
 
-- **ROS: Robotic OS**
+- **ROS/Robotic OS (IA):**
 Installation details are in [this repo](https://github.com/GTkernel/ros). 
 In this paper, we run `core_pub.yml` as MEC server-side workload, while `sub.yml` running as client at the same time to 
 generate the serving traffic and computation. Files are under `./pubsub/k8s/` in the ROS repo.
 
-- **MPEG-OMAF Video 360 by Web Browser**
+- **MPEG-OMAF Video 360 by Web Browser (Video360):**
 We follow this deployment process in [this repo](https://github.com/GTkernel/omaf-video-360).
 To ensure consistency in our test case during experiments, we use [GoReplay](https://goreplay.org) 
 to record client actions (API requests) from the browser. These recorded actions can then be replayed and fed into the Video360 server.
