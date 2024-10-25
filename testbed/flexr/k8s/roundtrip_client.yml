@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexr-roundtrip-client
+spec:
+  selector:
+    func: flexr
+    role: client
+  ports:
+    - port: 9090
+#      nodePort: 31499
+#  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flexr-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      func: flexr
+      role: client
+  template:
+    metadata:
+      labels:
+        func: flexr
+        role: client
+    spec:
+      volumes:
+      - name: img-dir
+        hostPath:
+## mounting point is the NFS directory shared amoung the nodes
+          path: /mnt/kubernetes/flexr/aruco_cam
+          type: Directory
+      - name: config-file
+        hostPath:
+          path: /mnt/kubernetes/flexr/recipes/roundtrip_client.yaml
+          type: File
+      containers:
+      - name: flexr-client
+        image: granite:30500/flexr:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - mountPath: /tmp/cam
+          name: img-dir
+        - mountPath: /tmp/config.yaml
+          name: config-file
+        command:
+        - /bin/bash
+        - -c
+        - "./bin/runner -y /tmp/config.yaml"

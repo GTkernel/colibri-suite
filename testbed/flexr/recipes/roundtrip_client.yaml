@@ -1,0 +1,84 @@
+- kernel   : ImgPlayer
+  id       : img_player
+  frequency: 20
+  logger   : [img_player, img_player.log]
+  others   :
+    - image_path    : /tmp/cam
+      filename_zeros: 6
+      num_of_images : 1000
+      iterate       : true
+      caching       : true
+  output   :
+    - port_name      : out_frame
+      connection_type: local
+
+- kernel   : FrameEncoder
+  id       : frameEncoder1
+  frequency: 30
+  logger   : [client_frame_encoder, client_frame_encoder.log]
+  others   :
+    - encoder : libx264
+      width   : 1920
+      height  : 1080
+      bitrate : 100000000
+  input    :
+    - port_name: in_frame
+      connection_type: local
+  output   :
+    - port_name      : out_encoded_frame
+      connection_type: remote
+      remote_info    : [TCP, flexr-roundtrip-server, 9090]
+
+
+- kernel   : FrameDecoder
+  id       : frameDecoder1
+  frequency: 30
+  logger   : [client_frame_decoder, client_frame_decoder.log]
+  others   :
+    - decoder: h264
+      width  : 1920
+      height : 1080
+  input    :
+    - port_name      : in_encoded_frame
+      connection_type: remote
+      remote_info    : [TCP, 9090]
+  output   :
+    - port_name      : out_frame
+      connection_type: local
+
+
+- kernel   : NonDisplay
+  id       : non_display
+  frequency: 30
+  logger   : [non_display, non_display.log]
+  input    :
+    - port_name      : in_frame
+      connection_type: local
+
+
+#- kernel   : Cv2GlRgbDisplay
+#  id       : cv2gl_rgb_display
+#  frequency: 30
+#  logger   : [cv2gl_rgb_display, cv2gl_rgb_display.log]
+#  others   :
+#    - width  : 1920
+#      height : 1080
+#  input    :
+#    - port_name      : in_frame
+#      connection_type: local
+#
+
+
+- local_connections:
+  - send_kernel   : img_player
+    send_port_name: out_frame
+    recv_kernel   : frameEncoder1
+    recv_port_name: in_frame
+    queue_size    : 1
+
+  - send_kernel   : frameDecoder1
+    send_port_name: out_frame
+    recv_kernel   : non_display
+    recv_port_name: in_frame
+    queue_size    : 1
+

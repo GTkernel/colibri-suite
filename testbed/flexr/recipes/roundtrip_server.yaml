@@ -1,0 +1,42 @@
+- kernel   : FrameDecoder
+  id       : frameDecoder1
+  frequency: 30
+  logger   : [server_frame_decoder, server_frame_decoder.log]
+  others   :
+    - decoder: h264
+      width  : 1920
+      height : 1080
+  input    :
+    - port_name      : in_encoded_frame
+      connection_type: remote
+      remote_info    : [TCP, 9090]
+  output   :
+    - port_name      : out_frame
+      connection_type: local
+
+
+- kernel   : FrameEncoder
+  id       : frameEncoder1
+  frequency: 30
+  logger   : [server_frame_encoder, server_frame_encoder.log]
+  others   :
+    - encoder : libx264
+      width   : 1920
+      height  : 1080
+      bitrate : 10000000
+  input    :
+    - port_name      : in_frame
+      connection_type: local
+  output   :
+    - port_name      : out_encoded_frame
+      connection_type: remote
+      remote_info    : [TCP, flexr-roundtrip-client, 9090]
+
+
+- local_connections:
+  - send_kernel   : frameDecoder1
+    send_port_name: out_frame
+    recv_kernel   : frameEncoder1
+    recv_port_name: in_frame
+    queue_size    : 1
+

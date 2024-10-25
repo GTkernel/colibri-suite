@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexr-receiver
+spec:
+  selector:
+    func: flexr
+    role: receiver
+  ports:
+    - port: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flexr-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      func: flexr
+      role: receiver
+  template:
+    metadata:
+      labels:
+        func: flexr
+        role: receiver
+    spec:
+#      nodeName: basalt
+      volumes:
+      - name: config-file
+        hostPath:
+          path: /mnt/kubernetes/flexr/recipes/streaming_receiver.yaml
+          type: File
+      containers:
+      - name: flexr-server
+        image: granite:30500/flexr:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - mountPath: /tmp/config.yaml
+          name: config-file
+        command:
+        - /bin/bash
+        - -c
+        - "./bin/runner -y /tmp/config.yaml"

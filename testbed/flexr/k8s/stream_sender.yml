@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flexr-sender
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      func: flexr
+      role: sender
+  template:
+    metadata:
+      labels:
+        func: flexr
+        role: sender
+    spec:
+      volumes:
+      - name: img-dir
+        hostPath:
+## mounting point is the NFS directory shared amoung the nodes
+          path: /mnt/kubernetes/flexr/aruco_cam
+          type: Directory
+      - name: config-file
+        hostPath:
+          path: /mnt/kubernetes/flexr/recipes/streaming_sender.yaml
+          type: File
+      containers:
+      - name: flexr-server
+        image: granite:30500/flexr:latest
+        imagePullPolicy: Never
+        volumeMounts:
+        - mountPath: /tmp/cam
+          name: img-dir
+        - mountPath: /tmp/config.yaml
+          name: config-file
+        command:
+        - /bin/bash
+        - -c
+        - "./bin/runner -y /tmp/config.yaml"

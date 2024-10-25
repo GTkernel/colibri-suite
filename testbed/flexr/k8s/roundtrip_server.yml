@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexr-roundtrip-server
+spec:
+  selector:
+    func: flexr
+    role: server
+  ports:
+    - port: 9090
+#      nodePort: 31499
+#  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flexr-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      func: flexr
+      role: server
+  template:
+    metadata:
+      labels:
+        func: flexr
+        role: server
+    spec:
+#      nodeName: basalt
+      volumes:
+      - name: config-file
+        hostPath:
+          path: /tmp/kubernetes/flexr/recipes/roundtrip_server.yaml
+          type: File
+      containers:
+      - name: flexr-server
+        image: granite:30500/flexr:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - mountPath: /tmp/config.yaml
+          name: config-file
+        command:
+        - /bin/bash
+        - -c
+        - "./bin/runner -y /tmp/config.yaml"
